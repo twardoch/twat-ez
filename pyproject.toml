@@ -18,7 +18,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "twat",
+    "twat>=1.0.0",
 ]
 
 
@@ -38,10 +38,7 @@ test = [
 
 
 all = [
-    "pytest>=7.0.0",
-    "pytest-cov>=4.0.0",
-    "ruff>=0.1.0",
-    "mypy>=1.0.0",
+    "twat>=1.0.0",
 ]
 
 [project.scripts]

@@ -10,6 +10,7 @@
 A focused module that provides QtNetwork-based download functionality with
 a synchronous Python interface. Handles HTTP redirects automatically.
 """
+
 from __future__ import annotations
 
 import importlib
@@ -379,7 +380,6 @@ def download_url(
     max_redir: int = 5,
 ) -> bytes | str:
     try:
-
         return download_url_qt(url, mode, max_redir)
     except Exception:
         return download_url_py(url, mode, max_redir)
@@ -442,7 +442,6 @@ def which_uv() -> Path | None:
 @lru_cache(maxsize=20)
 def which_pip() -> Path | None:
     try:
-
         pip_cli = which("pip")
         if pip_cli:
             pip_cli = Path(pip_cli)
