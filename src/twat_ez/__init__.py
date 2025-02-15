@@ -2,4 +2,4 @@
 
 from importlib import metadata
 
-__version__ = metadata.version(__name__) 
+__version__ = metadata.version(__name__)
