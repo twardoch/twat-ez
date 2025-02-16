@@ -1,13 +1,17 @@
-# this_file: pyproject.toml
+# this_file: twat_ez/pyproject.toml
+
+# Project Metadata Configuration
+# ------------------------------
+# Comprehensive project description, requirements, and compatibility information
 [project]
-name = "twat-ez"
-dynamic = ["version"]
-description = ""
-readme = "README.md"
-requires-python = ">=3.10"
-license = "MIT"
-keywords = []
-classifiers = [
+name = "twat-ez"  # Unique package name for PyPI and installation
+dynamic = ["version"]  # Version is dynamically determined from version control system
+description = "Easy and convenient utilities for the twat ecosystem"  # Short, descriptive package summary
+readme = "README.md"  # Path to the project's README file for package description
+requires-python = ">=3.10"  # Minimum Python version required, leveraging modern Python features
+license = "MIT"  # Open-source license type
+keywords = ["twat", "utilities", "convenience", "productivity"]  # Keywords for package discovery
+classifiers = [  # Metadata for package indexes and compatibility
     "Development Status :: 4 - Beta",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3.10",
@@ -17,67 +21,193 @@ classifiers = [
     "Programming Language :: Python :: Implementation :: PyPy",
 ]
 
+# Runtime Dependencies
+# -------------------
+# External packages required for the project to function
 dependencies = [
-    "twat>=1.0.0",
+    "twat>=1.8.1",           # Core twat package, providing essential functionality
 ]
 
-
+# Optional Dependencies
+# --------------------
+# Additional dependency groups for different use cases
 [project.optional-dependencies]
-
 dev = [
-    "pre-commit>=3.6.0",
-    "ruff>=0.1.0",
-    "mypy>=1.0.0",
-    "pyupgrade>=3.19.0",
+    "pre-commit>=4.1.0",     # Git pre-commit hooks for code quality
+    "ruff>=0.9.6",           # Fast Python linter and formatter
+    "mypy>=1.15.0",          # Static type checker for type safety
+    "pyupgrade>=3.19.1",     # Automatically upgrade Python syntax
 ]
 
 test = [
-    "pytest>=7.0.0",
-    "pytest-cov>=4.0.0",
+    "pytest>=8.3.4",         # Comprehensive testing framework
+    "pytest-cov>=6.0.0",     # Code coverage measurement and reporting
 ]
-
 
 all = [
-    "twat>=1.0.0",
+    "twat>=1.8.1",           # Core twat package for full functionality
 ]
 
-[project.scripts]
+# Twat Plugin Registration
+# -----------------------
+# Registers this package as a plugin for the twat ecosystem
 [project.entry-points."twat.plugins"]
-ez = "twat_ez"
+ez = "twat_ez"  # Plugin name and module for easy utilities
 
-
-
+# Project Authors
+# ---------------
 [[project.authors]]
-name = "Adam Twardoch"
-email = "adam+github@twardoch.com"
+name = "Adam Twardoch"  # Primary author's name
+email = "adam+github@twardoch.com"  # Contact email for the author
 
+# Project URLs
+# ------------
+# Links to project resources for documentation, issues, and source code
 [project.urls]
 Documentation = "https://github.com/twardoch/twat-ez#readme"
 Issues = "https://github.com/twardoch/twat-ez/issues"
 Source = "https://github.com/twardoch/twat-ez"
 
-
+# Build System Configuration
+# -------------------------
+# Specifies the build system and its requirements for packaging the project
 [build-system]
-build-backend = "hatchling.build"
 requires = [
-    "hatchling>=1.21.0", 
-    "hatch-vcs>=0.3.0"
+    "hatchling>=1.27.0",     # Modern, extensible build backend for Python projects
+    "hatch-vcs>=0.4.0",      # Plugin to dynamically generate version from Git tags/commits
+]
+build-backend = "hatchling.build"  # Use Hatchling as the build backend for consistent and flexible builds
+
+# Version Management
+# -----------------
+# Configures automatic version generation from version control system
+[tool.hatch.version]
+source = "vcs"  # Use version control system (Git) to determine version
+
+# Version Scheme
+# --------------
+# Defines how versions are generated and incremented
+[tool.hatch.version.raw-options]
+version_scheme = "post-release"  # Generates version numbers based on Git tags
+
+# Version File Generation
+# ----------------------
+# Automatically creates a version file in the package
+[tool.hatch.build.hooks.vcs]
+version-file = "src/twat_ez/__version__.py"
+
+# Wheel Distribution Configuration
+# --------------------------------
+# Controls how the package is built and distributed as a wheel
+[tool.hatch.build.targets.wheel]
+packages = ["src/twat_ez"]  # Only include the src/twat_ez directory in the wheel
+
+# Development Environment Configuration
+# -------------------------------------
+# Specifies dependencies and scripts for development, testing, and linting
+[tool.hatch.envs.default]
+dependencies = [
+    "pytest",               # Testing framework
+    "pytest-cov",           # Coverage reporting for tests
+    "mypy>=1.15.0",         # Static type checking
+    "ruff>=0.9.6",          # Fast Python linter and formatter
 ]
 
+# Development Environment Scripts
+# -------------------------------
+# Defines commands for testing, type checking, and linting
+[tool.hatch.envs.default.scripts]
+test = "pytest {args:tests}"                                                  # Run tests
+test-cov = "pytest --cov-report=term-missing --cov-config=pyproject.toml --cov=src/twat_ez --cov=tests {args:tests}"  # Run tests with coverage
+type-check = "mypy src/twat_ez tests"                                          # Perform static type checking
+lint = ["ruff check src/twat_ez tests", "ruff format src/twat_ez tests"]        # Lint and format code
 
-[tool.coverage.paths]
-twat_ez = ["src/twat_ez", "*/twat-ez/src/twat_ez"]
-tests = ["tests", "*/twat-ez/tests"]
+# Matrix Testing
+# --------------
+# Test the package across multiple Python versions
+[[tool.hatch.envs.all.matrix]]
+python = ["3.10", "3.11", "3.12"]
 
-
-
-[tool.coverage.report]
-exclude_lines = [
-    "no cov",
-    "if __name__ == .__main__.:",
-    "if TYPE_CHECKING:",
+# Linting Environment
+# ------------------
+# Separate environment for code quality tools
+[tool.hatch.envs.lint]
+detached = true
+dependencies = [
+    "mypy>=1.15.0",         # Static type checker
+    "ruff>=0.9.6",          # Linter and formatter
+    "pyupgrade>=3.19.1"     # Automatically upgrade Python syntax
 ]
 
+# Linting Scripts
+# ---------------
+# Commands for type checking, style checking, and automatic fixes
+[tool.hatch.envs.lint.scripts]
+typing = "mypy --install-types --non-interactive {args:src/twat_ez tests}"
+style = ["ruff check {args:.}", "ruff format {args:.}"]
+fmt = ["ruff format {args:.}", "ruff check --fix {args:.}"]
+fix = [
+    "ruff check --fix --unsafe-fixes {args:.}", 
+    "ruff format {args:.}"
+]
+all = ["style", "typing"]
+
+# Black Formatter Configuration
+# ----------------------------
+# Settings for the Black code formatter
+[tool.black]
+target-version = ["py310"]
+line-length = 88
+skip-string-normalization = true
+
+# Ruff Linter Configuration
+# ------------------------
+# Comprehensive linting rules and settings
+[tool.ruff]
+target-version = "py310"
+line-length = 88
+lint.extend-select = [
+    "A",    # Builtins
+    "ARG",  # Unused arguments
+    "B",    # Bugbear
+    "C",    # Complexity
+    "DTZ",  # Datetime
+    "E",    # Pycodestyle errors
+    "EM",   # Error messages
+    "F",    # Pyflakes
+    "FBT",  # Boolean trap
+    "I",    # Imports
+    "ICN",  # Import conventions
+    "ISC",  # String concatenation
+    "N",    # PEP 8 naming
+    "PLC",  # Pylint complexity
+    "PLE",  # Pylint errors
+    "PLR",  # Pylint refactoring
+    "PLW",  # Pylint warnings
+    "Q",    # Quotes
+    "RUF",  # Ruff-specific rules
+    "S",    # Security
+    "T",    # Print statements
+    "TID",  # Tidy imports
+    "UP",   # Pyupgrade
+    "W",    # Pycodestyle warnings
+    "YTT",  # sys.version comparisons
+]
+lint.ignore = [
+    "ARG001",  # Unused function argument
+    "E501",    # Line too long
+    "I001",    # Import sorting
+]
+
+# Per-file Linting Ignores
+# -----------------------
+# Customize linting rules for specific files or directories
+[tool.ruff.per-file-ignores]
+"tests/*" = ["S101"]  # Allow assert statements in test files
+
+# Coverage Configuration
+# ---------------------
+# Settings for code coverage reporting
 [tool.coverage.run]
 source_pkgs = ["twat_ez", "tests"]
 branch = true
@@ -86,73 +216,26 @@ omit = [
     "src/twat_ez/__about__.py",
 ]
 
+# Coverage Path Mapping
+# --------------------
+# Helps coverage tool identify source and test paths
+[tool.coverage.paths]
+twat_ez = ["src/twat_ez", "*/twat-ez/src/twat_ez"]
+tests = ["tests", "*/twat-ez/tests"]
 
-
-[tool.hatch.build.hooks.vcs]
-version-file = "src/twat_ez/__version__.py"
-
-
-[tool.hatch.build.targets.wheel]
-packages = ["src/twat_ez"]
-
-
-
-[tool.hatch.envs.default]
-dependencies = [
-    "pytest>=7.0.0",
-    "pytest-cov>=4.0.0",
-    "ruff>=0.1.0",
-    "mypy>=1.0.0",
+# Coverage Report Configuration
+# ----------------------------
+# Customize coverage report output
+[tool.coverage.report]
+exclude_lines = [
+    "no cov",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
 ]
 
-[[tool.hatch.envs.all.matrix]]
-python = ["3.10", "3.11", "3.12"]
-
-
-[tool.hatch.envs.default.scripts]
-test = "pytest {args:tests}"
-test-cov = "pytest --cov-report=term-missing --cov-config=pyproject.toml --cov=src/twat_ez --cov=tests {args:tests}"
-type-check = "mypy src/twat_ez tests"
-lint = ["ruff check src/twat_ez tests", "ruff format --respect-gitignore src/twat_ez tests"]
-fix = ["ruff check  --fix --unsafe-fixes src/twat_ez tests", "ruff format --respect-gitignore src/twat_ez tests"]
-
-
-
-[tool.hatch.envs.lint]
-detached = true
-dependencies = [
-    "pytest>=7.0.0",
-    "pytest-cov>=4.0.0",
-    "ruff>=0.1.0",
-    "mypy>=1.0.0",
-]
-
-
-[tool.hatch.envs.lint.scripts]
-typing = "mypy --install-types --non-interactive {args:src/twat_ez tests}"
-style = ["ruff check {args:.}", "ruff format --respect-gitignore {args:.}"]
-fmt = ["ruff format --respect-gitignore {args:.}", "ruff check --fix {args:.}"]
-all = ["style", "typing"]
-
-
-[tool.hatch.envs.test]
-dependencies = [
-]
-
-[tool.hatch.envs.test.scripts]
-test = "python -m pytest -n auto -p no:briefcase {args:tests}"
-test-cov = "python -m pytest -n auto -p no:briefcase --cov-report=term-missing --cov-config=pyproject.toml --cov=src/twat_ez --cov=tests {args:tests}"
-bench = "python -m pytest -v -p no:briefcase tests/test_benchmark.py --benchmark-only"
-bench-save = "python -m pytest -v -p no:briefcase tests/test_benchmark.py --benchmark-only --benchmark-json=benchmark/results.json"
-
-[tool.hatch.version]
-source = "vcs"
-
-
-[tool.hatch.version.raw-options]
-version_scheme = "post-release"
-
-
+# MyPy Type Checking Configuration
+# --------------------------------
+# Strict type checking settings
 [tool.mypy]
 python_version = "3.10"
 warn_return_any = true
@@ -167,50 +250,9 @@ warn_unused_ignores = true
 warn_no_return = true
 warn_unreachable = true
 
-
-[tool.ruff]
-target-version = "py310"
-line-length = 88
-
-[tool.ruff.lint]
-extend-select = [
-    "A",
-    "ARG",
-    "B",
-    "C",
-    "DTZ",
-    "E",
-    "EM",
-    "F",
-    "FBT",
-    "I",
-    "ICN",
-    "ISC",
-    "N",
-    "PLC",
-    "PLE",
-    "PLR",
-    "PLW",
-    "Q",
-    "RUF",
-    "S",
-    "T",
-    "TID",
-    "UP",
-    "W",
-    "YTT",
-]
-ignore = ["ARG001", "E501", "I001", "RUF001", "PLR2004", "EXE003", "ISC001"]
-
-
-
-[tool.ruff.per-file-ignores]
-"tests/*" = ["S101"]
-
-
-
-
-
+# pytest Configuration
+# --------------------
+# Settings for pytest framework
 [tool.pytest.ini_options]
 addopts = "-v --durations=10 -p no:briefcase"
 asyncio_mode = "auto"
@@ -241,7 +283,9 @@ python_files = ["test_*.py"]
 python_functions = ["test_*"]
 testpaths = ["tests"]
 
-
+# pytest-benchmark Configuration
+# --------------------------------
+# Settings for pytest-benchmark framework
 [tool.pytest-benchmark]
 min_rounds = 100
 min_time = 0.1
