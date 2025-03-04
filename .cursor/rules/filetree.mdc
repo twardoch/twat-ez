@@ -2,24 +2,25 @@
 description: File tree of the project
 globs: 
 ---
-[ 704]  .
+[ 736]  .
 ├── [  96]  .cursor
 │   └── [ 224]  rules
 │       ├── [ 821]  0project.mdc
 │       ├── [ 516]  cleanup.mdc
-│       ├── [2.5K]  filetree.mdc
+│       ├── [ 927]  filetree.mdc
 │       └── [2.0K]  quality.mdc
 ├── [  96]  .github
 │   └── [ 128]  workflows
 │       ├── [2.7K]  push.yml
 │       └── [1.4K]  release.yml
 ├── [3.5K]  .gitignore
-├── [ 532]  .pre-commit-config.yaml
+├── [ 470]  .pre-commit-config.yaml
+├── [ 987]  CLEANUP.txt
 ├── [1.0K]  LICENSE
 ├── [1023]  LOG.md
 ├── [ 746]  README.md
 ├── [   7]  VERSION.txt
-├── [ 11K]  cleanup.py
+├── [ 13K]  cleanup.py
 ├── [ 160]  dist
 ├── [9.5K]  pyproject.toml
 ├── [ 128]  src
@@ -29,4 +30,4 @@ globs:
 └── [ 128]  tests
     └── [ 145]  test_twat_ez.py
 
-9 directories, 17 files
+9 directories, 18 files

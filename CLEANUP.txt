@@ -1,0 +1,299 @@
+2025-03-04 07:18:13 - 
+=== PROJECT STATEMENT ===
+2025-03-04 07:18:13 - ---
+description: About this project
+globs:
+---
+# About this project
+
+`twat-fs` is a file system utility library focused on robust and extensible file upload capabilities with multiple provider support. It provides:
+
+- Multi-provider upload system with smart fallback (catbox.moe default, plus Dropbox, S3, etc.)
+- Automatic retry for temporary failures, fallback for permanent ones
+- URL validation and clean developer experience with type hints
+- Simple CLI: `python -m twat_fs upload_file path/to/file.txt`
+- Easy installation: `uv pip install twat-fs` (basic) or `uv pip install 'twat-fs[all,dev]'` (all features)
+
+## Development Notes
+- Uses `uv` for Python package management
+- Quality tools: ruff, mypy, pytest
+- Clear provider protocol for adding new storage backends
+- Strong typing and runtime checks throughout
+
+2025-03-04 07:18:13 - 
+=== Current Status ===
+2025-03-04 07:18:13 - Error: TODO.md is missing
+2025-03-04 07:18:13 - [ 736]  .
+├── [  96]  .cursor
+│   └── [ 224]  rules
+│       ├── [ 821]  0project.mdc
+│       ├── [ 516]  cleanup.mdc
+│       ├── [ 927]  filetree.mdc
+│       └── [2.0K]  quality.mdc
+├── [  96]  .github
+│   └── [ 128]  workflows
+│       ├── [2.7K]  push.yml
+│       └── [1.4K]  release.yml
+├── [3.5K]  .gitignore
+├── [ 470]  .pre-commit-config.yaml
+├── [ 987]  CLEANUP.txt
+├── [1.0K]  LICENSE
+├── [1023]  LOG.md
+├── [ 746]  README.md
+├── [   7]  VERSION.txt
+├── [ 13K]  cleanup.py
+├── [ 160]  dist
+├── [9.5K]  pyproject.toml
+├── [ 128]  src
+│   └── [ 192]  twat_ez
+│       ├── [  95]  __init__.py
+│       └── [ 18K]  py_needs.py
+└── [ 128]  tests
+    └── [ 145]  test_twat_ez.py
+
+9 directories, 18 files
+
+2025-03-04 07:18:13 - 
+Project structure:
+2025-03-04 07:18:13 - [ 736]  .
+├── [  96]  .cursor
+│   └── [ 224]  rules
+│       ├── [ 821]  0project.mdc
+│       ├── [ 516]  cleanup.mdc
+│       ├── [ 927]  filetree.mdc
+│       └── [2.0K]  quality.mdc
+├── [  96]  .github
+│   └── [ 128]  workflows
+│       ├── [2.7K]  push.yml
+│       └── [1.4K]  release.yml
+├── [3.5K]  .gitignore
+├── [ 470]  .pre-commit-config.yaml
+├── [ 987]  CLEANUP.txt
+├── [1.0K]  LICENSE
+├── [1023]  LOG.md
+├── [ 746]  README.md
+├── [   7]  VERSION.txt
+├── [ 13K]  cleanup.py
+├── [ 160]  dist
+├── [9.5K]  pyproject.toml
+├── [ 128]  src
+│   └── [ 192]  twat_ez
+│       ├── [  95]  __init__.py
+│       └── [ 18K]  py_needs.py
+└── [ 128]  tests
+    └── [ 145]  test_twat_ez.py
+
+9 directories, 18 files
+
+2025-03-04 07:18:13 - On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   .cursor/rules/filetree.mdc
+	modified:   .pre-commit-config.yaml
+	modified:   cleanup.py
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	CLEANUP.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+2025-03-04 07:18:13 - On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   .cursor/rules/filetree.mdc
+	modified:   .pre-commit-config.yaml
+	modified:   cleanup.py
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	CLEANUP.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+2025-03-04 07:18:13 - 
+=== Environment Status ===
+2025-03-04 07:18:13 - Setting up virtual environment
+2025-03-04 07:18:17 - Virtual environment created and activated
+2025-03-04 07:18:17 - Installing package with all extras
+2025-03-04 07:18:17 - Setting up virtual environment
+2025-03-04 07:18:18 - Virtual environment created and activated
+2025-03-04 07:18:21 - Package installed successfully
+2025-03-04 07:18:21 - Running code quality checks
+2025-03-04 07:18:21 - >>> Running code fixes...
+2025-03-04 07:18:21 - src/twat_ez/py_needs.py:367:9: B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+    |
+365 |     except urllib.error.HTTPError as e:
+366 |         msg = f"Download failed: HTTP {e.code} - {e.reason}"
+367 |         raise RuntimeError(msg)
+    |         ^^^^^^^^^^^^^^^^^^^^^^^ B904
+368 |     except urllib.error.URLError as e:
+369 |         msg = f"Download failed: {e.reason!s}"
+    |
+
+src/twat_ez/py_needs.py:370:9: B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+    |
+368 |     except urllib.error.URLError as e:
+369 |         msg = f"Download failed: {e.reason!s}"
+370 |         raise RuntimeError(msg)
+    |         ^^^^^^^^^^^^^^^^^^^^^^^ B904
+371 |     except Exception as e:
+372 |         msg = f"Download failed: {e!s}"
+    |
+
+src/twat_ez/py_needs.py:373:9: B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+    |
+371 |     except Exception as e:
+372 |         msg = f"Download failed: {e!s}"
+373 |         raise RuntimeError(msg)
+    |         ^^^^^^^^^^^^^^^^^^^^^^^ B904
+    |
+
+src/twat_ez/py_needs.py:422:13: S603 `subprocess` call: check for execution of untrusted input
+    |
+420 |     if pip_cli:
+421 |         try:
+422 |             subprocess.run(
+    |             ^^^^^^^^^^^^^^ S603
+423 |                 [str(pip_cli), "install", "--user", "uv"],
+424 |                 check=True,
+    |
+
+src/twat_ez/py_needs.py:459:5: S110 `try`-`except`-`pass` detected, consider logging the exception
+    |
+457 |               if pip_cli.exists():
+458 |                   return pip_cli
+459 | /     except Exception:
+460 | |         pass
+    | |____________^ S110
+461 |       try:
+462 |           import ensurepip
+    |
+
+src/twat_ez/py_needs.py:484:5: FBT001 Boolean-typed positional argument in function definition
+    |
+482 |     mode: int = os.F_OK | os.X_OK,
+483 |     path: str | None = None,
+484 |     verify: bool = True,
+    |     ^^^^^^ FBT001
+485 | ) -> Path | None:
+486 |     """
+    |
+
+src/twat_ez/py_needs.py:484:5: FBT002 Boolean default positional argument in function definition
+    |
+482 |     mode: int = os.F_OK | os.X_OK,
+483 |     path: str | None = None,
+484 |     verify: bool = True,
+    |     ^^^^^^ FBT002
+485 | ) -> Path | None:
+486 |     """
+    |
+
+src/twat_ez/py_needs.py:574:42: FBT001 Boolean-typed positional argument in function definition
+    |
+574 | def _install_with_uv(missing: list[str], target: bool) -> None:
+    |                                          ^^^^^^ FBT001
+575 |     """
+576 |     Install missing packages using UV package manager.
+    |
+
+src/twat_ez/py_needs.py:597:14: S603 `subprocess` call: check for execution of untrusted input
+    |
+595 |     cmd.extend(missing)
+596 |
+597 |     result = subprocess.run(cmd, check=True, capture_output=True, text=True)
+    |              ^^^^^^^^^^^^^^ S603
+598 |
+599 |     if result.stdout:
+    |
+
+src/twat_ez/py_needs.py:618:13: B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+    |
+616 |         except ImportError as e:
+617 |             msg = f"Failed to import {mod} after installation: {e}"
+618 |             raise RuntimeError(msg)
+    |             ^^^^^^^^^^^^^^^^^^^^^^^ B904
+    |
+
+src/twat_ez/py_needs.py:621:28: FBT001 Boolean-typed positional argument in function definition
+    |
+621 | def needs(mods: list[str], target: bool = False) -> Callable:
+    |                            ^^^^^^ FBT001
+622 |     """
+623 |     Decorator to auto-install missing dependencies using uv.
+    |
+
+src/twat_ez/py_needs.py:621:28: FBT002 Boolean default positional argument in function definition
+    |
+621 | def needs(mods: list[str], target: bool = False) -> Callable:
+    |                            ^^^^^^ FBT002
+622 |     """
+623 |     Decorator to auto-install missing dependencies using uv.
+    |
+
+src/twat_ez/py_needs.py:646:21: B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+    |
+644 |                 except subprocess.CalledProcessError as e:
+645 |                     msg = f"UV installation failed: {e.stderr}"
+646 |                     raise RuntimeError(msg)
+    |                     ^^^^^^^^^^^^^^^^^^^^^^^ B904
+647 |                 except Exception as e:
+648 |                     msg = f"Unexpected error during installation: {e!s}"
+    |
+
+src/twat_ez/py_needs.py:649:21: B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+    |
+647 |                 except Exception as e:
+648 |                     msg = f"Unexpected error during installation: {e!s}"
+649 |                     raise RuntimeError(msg)
+    |                     ^^^^^^^^^^^^^^^^^^^^^^^ B904
+650 |             return f(*args, **kwargs)
+    |
+
+Found 14 errors.
+
+2025-03-04 07:18:21 - 3 files left unchanged
+
+2025-03-04 07:18:21 - >>>Running type checks...
+2025-03-04 07:18:40 - tests/test_twat_ez.py:4: error: Function is missing a return type annotation  [no-untyped-def]
+tests/test_twat_ez.py:4: note: Use "-> None" if function does not return a value
+src/twat_ez/py_needs.py:65: error: Cannot find implementation or library stub for module named "fontlab"  [import-not-found]
+src/twat_ez/py_needs.py:292: error: Cannot find implementation or library stub for module named "PythonQt"  [import-not-found]
+src/twat_ez/py_needs.py:293: error: Cannot find implementation or library stub for module named "PythonQt.QtCore"  [import-not-found]
+src/twat_ez/py_needs.py:293: note: See https://mypy.readthedocs.io/en/stable/running_mypy.html#missing-imports
+src/twat_ez/py_needs.py:638: error: Function is missing a type annotation  [no-untyped-def]
+src/twat_ez/py_needs.py:658: error: Function is missing a return type annotation  [no-untyped-def]
+src/twat_ez/py_needs.py:659: error: Skipping analyzing "fire": module is installed, but missing library stubs or py.typed marker  [import-untyped]
+Found 7 errors in 2 files (checked 4 source files)
+
+2025-03-04 07:18:40 - >>> Running tests...
+2025-03-04 07:18:45 - ============================= test session starts ==============================
+platform darwin -- Python 3.12.8, pytest-8.3.5, pluggy-1.5.0 -- /Users/adam/Developer/vcs/github.twardoch/pub/twat-packages/_good/twat/plugins/repos/twat_ez/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /Users/adam/Developer/vcs/github.twardoch/pub/twat-packages/_good/twat/plugins/repos/twat_ez
+configfile: pyproject.toml
+plugins: cov-6.0.0
+collecting ... collected 1 item
+
+tests/test_twat_ez.py::test_version PASSED                               [100%]
+
+============================= slowest 10 durations =============================
+0.03s call     tests/test_twat_ez.py::test_version
+
+(2 durations < 0.005s hidden.  Use -vv to show these durations.)
+============================== 1 passed in 0.14s ===============================
+
+2025-03-04 07:18:45 - All checks completed
+2025-03-04 07:18:45 -  M .cursor/rules/filetree.mdc
+ M .pre-commit-config.yaml
+ M cleanup.py
+?? CLEANUP.txt
+
+2025-03-04 07:18:45 - Changes detected in repository
