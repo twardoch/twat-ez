@@ -1,19 +1,25 @@
-# this_file: twat_ez/pyproject.toml
-
-# this_file: twat_ez/pyproject.toml
-
+# this_file: pyproject.toml
+# this_project: twat_ez
 # Project Metadata Configuration
 # ------------------------------
 # Comprehensive project description, requirements, and compatibility information
 [project]
-name = "twat-ez"  # Unique package name for PyPI and installation
-dynamic = ["version"]  # Version is dynamically determined from version control system
-description = "Easy and convenient utilities for the twat ecosystem"  # Short, descriptive package summary
-readme = "README.md"  # Path to the project's README file for package description
-requires-python = ">=3.10"  # Minimum Python version required, leveraging modern Python features
-license = "MIT"  # Open-source license type
-keywords = ["twat", "utilities", "convenience", "productivity"]  # Keywords for package discovery
-classifiers = [  # Metadata for package indexes and compatibility
+name = "twat-ez" # Unique package name for PyPI and installation
+dynamic = [
+    "version"
+] # Version is dynamically determined from version control system
+description = "Easy and convenient utilities for the twat ecosystem" # Short, descriptive package summary
+readme = "README.md" # Path to the project's README file for package description
+requires-python = ">=3.10" # Minimum Python version required, leveraging modern Python features
+license = "MIT" # Open-source license type
+keywords = [
+    "twat",
+    "utilities",
+    "convenience",
+    "productivity"
+] # Keywords for package discovery
+classifiers = [
+    # Metadata for package indexes and compatibility
     "Development Status :: 4 - Beta",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3.10",
@@ -22,12 +28,12 @@ classifiers = [  # Metadata for package indexes and compatibility
     "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: Python :: Implementation :: PyPy",
 ]
-
 # Runtime Dependencies
 # -------------------
 # External packages required for the project to function
 dependencies = [
-    "twat>=1.8.1",           # Core twat package, providing essential functionality
+    "twat>=1.8.1", # Core twat package, providing essential functionality
+
 ]
 
 # Optional Dependencies
@@ -35,32 +41,33 @@ dependencies = [
 # Additional dependency groups for different use cases
 [project.optional-dependencies]
 dev = [
-    "pre-commit>=4.1.0",     # Git pre-commit hooks for code quality
-    "ruff>=0.9.6",           # Fast Python linter and formatter
-    "mypy>=1.15.0",          # Static type checker for type safety
-    "pyupgrade>=3.19.1",     # Automatically upgrade Python syntax
-]
+    "pre-commit>=4.1.0", # Git pre-commit hooks for code quality
+    "ruff>=0.9.6", # Fast Python linter and formatter
+    "mypy>=1.15.0", # Static type checker for type safety
+    "pyupgrade>=3.19.1", # Automatically upgrade Python syntax
 
+]
 test = [
-    "pytest>=8.3.4",         # Comprehensive testing framework
-    "pytest-cov>=6.0.0",     # Code coverage measurement and reporting
-]
+    "pytest>=8.3.5", # Comprehensive testing framework
+    "pytest-cov>=6.0.0", # Code coverage measurement and reporting
 
+]
 all = [
-    "twat>=1.8.1",           # Core twat package for full functionality
+    "twat>=1.8.1", # Core twat package for full functionality
+
 ]
 
 # Twat Plugin Registration
 # -----------------------
 # Registers this package as a plugin for the twat ecosystem
 [project.entry-points."twat.plugins"]
-ez = "twat_ez"  # Plugin name and module for easy utilities
+ez = "twat_ez" # Plugin name and module for easy utilities
 
 # Project Authors
 # ---------------
 [[project.authors]]
-name = "Adam Twardoch"  # Primary author's name
-email = "adam+github@twardoch.com"  # Contact email for the author
+name = "Adam Twardoch" # Primary author's name
+email = "adam+github@twardoch.com" # Contact email for the author
 
 # Project URLs
 # ------------
@@ -75,22 +82,23 @@ Source = "https://github.com/twardoch/twat-ez"
 # Specifies the build system and its requirements for packaging the project
 [build-system]
 requires = [
-    "hatchling>=1.27.0",     # Modern, extensible build backend for Python projects
-    "hatch-vcs>=0.4.0",      # Plugin to dynamically generate version from Git tags/commits
+    "hatchling>=1.27.0", # Modern, extensible build backend for Python projects
+    "hatch-vcs>=0.4.0", # Plugin to dynamically generate version from Git tags/commits
+
 ]
-build-backend = "hatchling.build"  # Use Hatchling as the build backend for consistent and flexible builds
+build-backend = "hatchling.build" # Use Hatchling as the build backend for consistent and flexible builds
 
 # Version Management
 # -----------------
 # Configures automatic version generation from version control system
 [tool.hatch.version]
-source = "vcs"  # Use version control system (Git) to determine version
+source = "vcs" # Use version control system (Git) to determine version
 
 # Version Scheme
 # --------------
 # Defines how versions are generated and incremented
 [tool.hatch.version.raw-options]
-version_scheme = "post-release"  # Generates version numbers based on Git tags
+version_scheme = "post-release" # Generates version numbers based on Git tags
 
 # Version File Generation
 # ----------------------
@@ -102,27 +110,31 @@ version-file = "src/twat_ez/__version__.py"
 # --------------------------------
 # Controls how the package is built and distributed as a wheel
 [tool.hatch.build.targets.wheel]
-packages = ["src/twat_ez"]  # Only include the src/twat_ez directory in the wheel
+packages = ["src/twat_ez"] # Only include the src/twat_ez directory in the wheel
 
 # Development Environment Configuration
 # -------------------------------------
 # Specifies dependencies and scripts for development, testing, and linting
 [tool.hatch.envs.default]
 dependencies = [
-    "pytest",               # Testing framework
-    "pytest-cov",           # Coverage reporting for tests
-    "mypy>=1.15.0",         # Static type checking
-    "ruff>=0.9.6",          # Fast Python linter and formatter
+    "pytest", # Testing framework
+    "pytest-cov", # Coverage reporting for tests
+    "mypy>=1.15.0", # Static type checking
+    "ruff>=0.9.6", # Fast Python linter and formatter
+
 ]
 
 # Development Environment Scripts
 # -------------------------------
 # Defines commands for testing, type checking, and linting
 [tool.hatch.envs.default.scripts]
-test = "pytest {args:tests}"                                                  # Run tests
-test-cov = "pytest --cov-report=term-missing --cov-config=pyproject.toml --cov=src/twat_ez --cov=tests {args:tests}"  # Run tests with coverage
-type-check = "mypy src/twat_ez tests"                                          # Perform static type checking
-lint = ["ruff check src/twat_ez tests", "ruff format src/twat_ez tests"]        # Lint and format code
+test = "pytest {args:tests}" # Run tests
+test-cov = "pytest --cov-report=term-missing --cov-config=pyproject.toml --cov=src/twat_ez --cov=tests {args:tests}" # Run tests with coverage
+type-check = "mypy src/twat_ez tests" # Perform static type checking
+lint = [
+    "ruff check src/twat_ez tests",
+    "ruff format src/twat_ez tests"
+] # Lint and format code
 
 # Matrix Testing
 # --------------
@@ -136,9 +148,10 @@ python = ["3.10", "3.11", "3.12"]
 [tool.hatch.envs.lint]
 detached = true
 dependencies = [
-    "mypy>=1.15.0",         # Static type checker
-    "ruff>=0.9.6",          # Linter and formatter
-    "pyupgrade>=3.19.1"     # Automatically upgrade Python syntax
+    "mypy>=1.15.0", # Static type checker
+    "ruff>=0.9.6", # Linter and formatter
+    "pyupgrade>=3.19.1"
+    # Automatically upgrade Python syntax
 ]
 
 # Linting Scripts
@@ -148,10 +161,7 @@ dependencies = [
 typing = "mypy --install-types --non-interactive {args:src/twat_ez tests}"
 style = ["ruff check {args:.}", "ruff format {args:.}"]
 fmt = ["ruff format {args:.}", "ruff check --fix {args:.}"]
-fix = [
-    "ruff check --fix --unsafe-fixes {args:.}", 
-    "ruff format {args:.}"
-]
+fix = ["ruff check --fix --unsafe-fixes {args:.}", "ruff format {args:.}"]
 all = ["style", "typing"]
 
 # Black Formatter Configuration
@@ -169,43 +179,59 @@ skip-string-normalization = true
 target-version = "py310"
 line-length = 88
 lint.extend-select = [
-    "A",    # Builtins
-    "ARG",  # Unused arguments
-    "B",    # Bugbear
-    "C",    # Complexity
-    "DTZ",  # Datetime
-    "E",    # Pycodestyle errors
-    "EM",   # Error messages
-    "F",    # Pyflakes
-    "FBT",  # Boolean trap
-    "I",    # Imports
-    "ICN",  # Import conventions
-    "ISC",  # String concatenation
-    "N",    # PEP 8 naming
-    "PLC",  # Pylint complexity
-    "PLE",  # Pylint errors
-    "PLR",  # Pylint refactoring
-    "PLW",  # Pylint warnings
-    "Q",    # Quotes
-    "RUF",  # Ruff-specific rules
-    "S",    # Security
-    "T",    # Print statements
-    "TID",  # Tidy imports
-    "UP",   # Pyupgrade
-    "W",    # Pycodestyle warnings
-    "YTT",  # sys.version comparisons
+    "A", # Builtins
+    "ARG", # Unused arguments
+    "B", # Bugbear
+    "C", # Complexity
+    "DTZ", # Datetime
+    "E", # Pycodestyle errors
+    "EM", # Error messages
+    "F", # Pyflakes
+    "FBT", # Boolean trap
+    "I", # Imports
+    "ICN", # Import conventions
+    "ISC", # String concatenation
+    "N", # PEP 8 naming
+    "PLC", # Pylint complexity
+    "PLE", # Pylint errors
+    "PLR", # Pylint refactoring
+    "PLW", # Pylint warnings
+    "Q", # Quotes
+    "RUF", # Ruff-specific rules
+    "S", # Security
+    "T", # Print statements
+    "TID", # Tidy imports
+    "UP", # Pyupgrade
+    "W", # Pycodestyle warnings
+    "YTT", # sys.version comparisons
+
 ]
 lint.ignore = [
-    "ARG001",  # Unused function argument
-    "E501",    # Line too long
-    "I001",    # Import sorting
+    "ARG001", # Unused function argument
+    "E501", # Line too long
+    "I001", # Import sorting
+
 ]
+
+# isort configuration within Ruff
+[tool.ruff.lint.isort]
+known-first-party = ["twat_ez"] # Treat as first-party imports for sorting
+
+# flake8-tidy-imports configuration within Ruff
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "all" # Ban all relative imports for consistency
 
 # Per-file Linting Ignores
 # -----------------------
 # Customize linting rules for specific files or directories
-[tool.ruff.per-file-ignores]
-"tests/*" = ["S101"]  # Allow assert statements in test files
+[tool.ruff.lint.per-file-ignores]
+# Tests can use magic values, assertions, and relative imports
+"tests/**/*" = [
+    "PLR2004", # Allow magic values in tests for readability
+    "S101", # Allow assertions in tests
+    "TID252"
+    # Allow relative imports in tests for convenience
+]
 
 # Coverage Configuration
 # ---------------------
@@ -214,9 +240,7 @@ lint.ignore = [
 source_pkgs = ["twat_ez", "tests"]
 branch = true
 parallel = true
-omit = [
-    "src/twat_ez/__about__.py",
-]
+omit = ["src/twat_ez/__about__.py"]
 
 # Coverage Path Mapping
 # --------------------
@@ -229,11 +253,7 @@ tests = ["tests", "*/twat-ez/tests"]
 # ----------------------------
 # Customize coverage report output
 [tool.coverage.report]
-exclude_lines = [
-    "no cov",
-    "if __name__ == .__main__.:",
-    "if TYPE_CHECKING:",
-]
+exclude_lines = ["no cov", "if __name__ == .__main__.:", "if TYPE_CHECKING:"]
 
 # MyPy Type Checking Configuration
 # --------------------------------
@@ -263,23 +283,22 @@ filterwarnings = ["ignore::DeprecationWarning", "ignore::UserWarning"]
 log_cli = true
 log_cli_level = "INFO"
 markers = [
-  "benchmark: marks tests as benchmarks (select with '-m benchmark')",
-  "unit: mark a test as a unit test",
-  "integration: mark a test as an integration test",
-  "permutation: tests for permutation functionality",
-  "parameter: tests for parameter parsing",
-  "prompt: tests for prompt parsing",
+    "benchmark: marks tests as benchmarks (select with '-m benchmark')",
+    "unit: mark a test as a unit test",
+    "integration: mark a test as an integration test",
+    "permutation: tests for permutation functionality",
+    "parameter: tests for parameter parsing",
+    "prompt: tests for prompt parsing",
 ]
 norecursedirs = [
-  ".*",
-  "build",
-  "dist",
-  "venv",
-  "__pycache__",
-  "*.egg-info",
-  "_private",
+    ".*",
+    "build",
+    "dist",
+    "venv",
+    "__pycache__",
+    "*.egg-info",
+    "_private",
 ]
-
 python_classes = ["Test*"]
 python_files = ["test_*.py"]
 python_functions = ["test_*"]
@@ -295,12 +314,13 @@ histogram = true
 storage = "file"
 save-data = true
 compare = [
-    "min",    # Minimum time
-    "max",    # Maximum time
-    "mean",   # Mean time
+    "min", # Minimum time
+    "max", # Maximum time
+    "mean", # Mean time
     "stddev", # Standard deviation
     "median", # Median time
-    "iqr",    # Inter-quartile range
-    "ops",    # Operations per second
+    "iqr", # Inter-quartile range
+    "ops", # Operations per second
     "rounds", # Number of rounds
-] 
+
+]
