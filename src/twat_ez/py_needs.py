@@ -62,7 +62,7 @@ def _get_fontlab_site_packages() -> Path | None:
         None: If FontLab is not available or the path is not in sys.path
     """
     try:
-        import fontlab
+        import fontlab  # noqa: PLC0415
 
         # Get FontLab data path
         fontlab_path = Path(fontlab.flPreferences.instance().dataPath)
@@ -280,7 +280,9 @@ def download_url_qt(
 
     Args:
         url: HTTP/HTTPS URL to download from
-        max_redir: Maximum number of redirects to follow (default: 5)
+        max_redir: Maximum number of redirects to follow (default: 5).
+                   Note: `urllib.request.urlopen` handles redirects automatically.
+                   This parameter is kept for interface consistency with `download_url_qt`.
         mode: 0 for raw bytes, 1 for string or bytes, 2 for string
 
     Returns:
@@ -289,8 +291,8 @@ def download_url_qt(
     Raises:
         RuntimeError: For network errors, too many redirects, or invalid responses
     """
-    from PythonQt import QtNetwork
-    from PythonQt.QtCore import QEventLoop, QUrl
+    from PythonQt import QtNetwork  # noqa: PLC0415
+    from PythonQt.QtCore import QEventLoop, QUrl  # noqa: PLC0415
 
     loop, nam = QEventLoop(), QtNetwork.QNetworkAccessManager()
     current_url, redir_count = QUrl(url), 0
@@ -352,8 +354,8 @@ def download_url_py(
     Raises:
         RuntimeError: For network errors, too many redirects, or invalid responses
     """
-    import urllib.error
-    import urllib.request
+    import urllib.error  # noqa: PLC0415
+    import urllib.request  # noqa: PLC0415
 
     opener = urllib.request.build_opener()
     opener.addheaders = [("User-Agent", "Python-urllib/3.x")]
@@ -364,13 +366,13 @@ def download_url_py(
             return bin_or_str(data, mode)
     except urllib.error.HTTPError as e:
         msg = f"Download failed: HTTP {e.code} - {e.reason}"
-        raise RuntimeError(msg)
+        raise RuntimeError(msg) from e
     except urllib.error.URLError as e:
         msg = f"Download failed: {e.reason!s}"
-        raise RuntimeError(msg)
+        raise RuntimeError(msg) from e
     except Exception as e:
         msg = f"Download failed: {e!s}"
-        raise RuntimeError(msg)
+        raise RuntimeError(msg) from e
 
 
 @lru_cache(maxsize=20)
@@ -419,7 +421,7 @@ def which_uv() -> Path | None:
     pip_cli = which_pip()
     if pip_cli:
         try:
-            subprocess.run(
+            subprocess.run(  # noqa: S603
                 [str(pip_cli), "install", "--user", "uv"],
                 check=True,
                 capture_output=True,
@@ -441,36 +443,65 @@ def which_uv() -> Path | None:
 ####################################
 @lru_cache(maxsize=20)
 def which_pip() -> Path | None:
-    try:
-        pip_cli = which("pip")
-        if pip_cli:
-            pip_cli = Path(pip_cli)
-            if pip_cli.exists():
-                return pip_cli
-    except ImportError:
-        pass
+    """
+    Locate the pip executable. Tries `which()` first, then `ensurepip`.
 
-    try:
-        pip_cli = which("pip")
-        if pip_cli:
-            pip_cli = Path(pip_cli)
-            if pip_cli.exists():
-                return pip_cli
-    except Exception:
-        pass
-    try:
-        import ensurepip
+    Returns:
+        Path | None: Path to pip executable if found, None otherwise.
+    """
+    # Try to find pip using the extended which
+    pip_path = which("pip")
+    if pip_path and pip_path.exists():
+        return pip_path
 
+    # If not found, try to bootstrap pip using ensurepip
+    logging.info("pip not found via which(). Trying to ensure pip is available.")
+    try:
+        import ensurepip  # noqa: PLC0415
+
+        # Bootstrap pip. This will install pip if it's not already available.
+        # ensurepip.bootstrap() might add pip to a location that which() can find.
         ensurepip.bootstrap()
+
+        # After bootstrapping, try to find pip again.
+        # We also need to re-import pip if it was just bootstrapped.
+        if importlib.util.find_spec("pip") is None:
+            importlib.reload(site)  # Reload site to pick up new paths if any
+
+        # Attempt to import pip to confirm it's truly available
         importlib.import_module("pip")
-        pip_cli = which("pip")
-        if pip_cli:
-            pip_cli = Path(pip_cli)
-            if pip_cli.exists():
-                return pip_cli
+
+        pip_path_after_bootstrap = which("pip")
+        if pip_path_after_bootstrap and pip_path_after_bootstrap.exists():
+            logging.info(f"pip found at {pip_path_after_bootstrap} after ensurepip.")
+            return pip_path_after_bootstrap
+
+        # As a last resort, try getting path from pip module if available
+        if (
+            pip_module_spec := importlib.util.find_spec("pip")
+        ) and pip_module_spec.origin:
+            # pip a_module.__file__ is usually an __init__.py, so go to parent dir for bin
+            pip_module_path = Path(pip_module_spec.origin).parent
+            # This heuristic might not always yield the pip executable directly
+            # e.g. pip_module_path could be .../site-packages/pip
+            # and executable could be .../bin/pip
+            # We rely on `which` being able to find it after bootstrap.
+            # This part is more of a fallback if `which` still fails.
+            if potential_pip_exe := shutil.which(
+                "pip", path=str(pip_module_path.parent / "bin")
+            ):
+                return Path(potential_pip_exe)
+            if potential_pip_exe := shutil.which("pip"):  # try global path again
+                return Path(potential_pip_exe)
+
+        logging.warning("pip could not be found or bootstrapped via ensurepip.")
+        return None
+    except ImportError:
+        logging.warning("ensurepip module not found. Cannot bootstrap pip.")
+        return None
     except Exception as e:
-        logging.warning(f"Error ensuring pip: {e!s}")
-    return None
+        logging.warning(f"Error during pip bootstrap or discovery: {e!s}")
+        return None
 
 
 ####################################
@@ -481,7 +512,7 @@ def which(
     cmd: str,
     mode: int = os.F_OK | os.X_OK,
     path: str | None = None,
-    verify: bool = True,
+    verify: bool = True,  # noqa: FBT001, FBT002
 ) -> Path | None:
     """
     Enhanced version of shutil.which that searches an extended set of paths.
@@ -594,7 +625,7 @@ def _install_with_uv(missing: list[str], target: bool) -> None:
         cmd.extend(["--python", sys.executable])
     cmd.extend(missing)
 
-    result = subprocess.run(cmd, check=True, capture_output=True, text=True)
+    result = subprocess.run(cmd, check=True, capture_output=True, text=True)  # noqa: S603
 
     if result.stdout:
         logging.debug(f"UV install output: {result.stdout}")
@@ -615,10 +646,10 @@ def _import_modules(modules: list[str]) -> None:
             importlib.import_module(mod)
         except ImportError as e:
             msg = f"Failed to import {mod} after installation: {e}"
-            raise RuntimeError(msg)
+            raise RuntimeError(msg) from e
 
 
-def needs(mods: list[str], target: bool = False) -> Callable:
+def needs(mods: list[str], *, target: bool = False) -> Callable:
     """
     Decorator to auto-install missing dependencies using uv.
 
@@ -643,10 +674,10 @@ def needs(mods: list[str], target: bool = False) -> Callable:
                     _import_modules(missing)
                 except subprocess.CalledProcessError as e:
                     msg = f"UV installation failed: {e.stderr}"
-                    raise RuntimeError(msg)
+                    raise RuntimeError(msg) from e
                 except Exception as e:
                     msg = f"Unexpected error during installation: {e!s}"
-                    raise RuntimeError(msg)
+                    raise RuntimeError(msg) from e
             return f(*args, **kwargs)
 
         return wrapper
@@ -655,8 +686,8 @@ def needs(mods: list[str], target: bool = False) -> Callable:
 
 
 @needs(["fire", "pydantic"], target=False)
-def main():
-    import fire
+def main() -> None:
+    import fire  # noqa: PLC0415
 
     logging.info(repr(fire))
     return fire
