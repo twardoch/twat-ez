@@ -38,6 +38,22 @@ jobs:
           version: "latest"
           args: "format --check --respect-gitignore"
 
+      - name: Set up Python for MyPy & Hatch
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install UV & Hatch for MyPy
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "latest"
+          python-version: '3.12'
+      - name: Install Hatch and project dev dependencies for MyPy
+        run: |
+          uv pip install --system hatch
+          hatch env create default # This should install dev dependencies like mypy using uv
+      - name: Run MyPy via Hatch
+        run: hatch run type-check
+
   test:
     name: Run Tests
     needs: quality

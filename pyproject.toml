@@ -116,6 +116,7 @@ packages = ["src/twat_ez"] # Only include the src/twat_ez directory in the wheel
 # -------------------------------------
 # Specifies dependencies and scripts for development, testing, and linting
 [tool.hatch.envs.default]
+installer = "uv"
 dependencies = [
     "pytest", # Testing framework
     "pytest-cov", # Coverage reporting for tests
@@ -147,6 +148,7 @@ python = ["3.10", "3.11", "3.12"]
 # Separate environment for code quality tools
 [tool.hatch.envs.lint]
 detached = true
+installer = "uv"
 dependencies = [
     "mypy>=1.15.0", # Static type checker
     "ruff>=0.9.6", # Linter and formatter
@@ -271,6 +273,10 @@ warn_redundant_casts = true
 warn_unused_ignores = true
 warn_no_return = true
 warn_unreachable = true
+
+[[tool.mypy.overrides]]
+module = ["fontlab", "PythonQt", "PythonQt.*"]
+ignore_missing_imports = true
 
 # pytest Configuration
 # --------------------
