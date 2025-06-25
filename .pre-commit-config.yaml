@@ -1,13 +1,26 @@
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.3.4
+    rev: v0.5.0 # Updated Ruff version
     hooks:
       - id: ruff
-        args: [--fix]
+        args: [--fix, --exit-non-zero-on-fix] # Added --exit-non-zero-on-fix
       - id: ruff-format
-        args: [--respect-gitignore]
+        args: [--check, --diff] # Make it a check, consistent with CI
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.11.0 # Added MyPy
+    hooks:
+      - id: mypy
+        # MyPy will use settings from pyproject.toml
+        # Ensure the environment pre-commit runs in has access to project dependencies + mypy
+        # additional_dependencies: ["types-...", etc.] might be needed if not in main deps
+        # For this project, dev dependencies in pyproject.toml should cover it
+        # when used with an environment that has them (like hatch shell).
+        # Pre-commit usually creates its own isolated envs for hooks.
+        # We list project dependencies here so mypy hook's env has them.
+        additional_dependencies: ["twat-ez[dev,test]"] # Install project with dev and test extras
+
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v4.6.0 # Updated pre-commit-hooks version
     hooks:
       - id: check-yaml
       - id: check-toml
