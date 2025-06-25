@@ -1,1 +1,1 @@
-Additional local changes
+Local changes: Update VERSION.txt
