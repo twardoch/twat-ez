@@ -1,0 +1,8 @@
+106	./uv.lock
+40	./REPO_CONTENT.txt
+33	./tests/test_twat_ez.py
+22	./README.md
+21	./src/twat_ez/py_needs.py
+13	./CLEANUP.txt
+13	./cleanup.py
+10	./pyproject.toml
