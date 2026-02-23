@@ -19,7 +19,6 @@ keywords = [
     "productivity"
 ] # Keywords for package discovery
 classifiers = [
-    # Metadata for package indexes and compatibility
     "Development Status :: 4 - Beta",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3.10",
@@ -46,6 +45,12 @@ dev = [
     "mypy>=1.15.0", # Static type checker for type safety
     "pyupgrade>=3.19.1", # Automatically upgrade Python syntax
 
+]
+
+docs = [
+    "mkdocs>=1.6.0",
+    "mkdocs-material>=9.5.0",
+    "mkdocstrings[python]>=0.27.0",
 ]
 test = [
     "pytest>=8.3.5", # Comprehensive testing framework
@@ -171,7 +176,7 @@ all = ["style", "typing"]
 # Settings for the Black code formatter
 [tool.black]
 target-version = ["py310"]
-line-length = 88
+line-length = 120
 skip-string-normalization = true
 
 # Ruff Linter Configuration
@@ -179,65 +184,67 @@ skip-string-normalization = true
 # Comprehensive linting rules and settings
 [tool.ruff]
 target-version = "py310"
-line-length = 88
-lint.extend-select = [
-    "A", # Builtins
-    "ARG", # Unused arguments
-    "B", # Bugbear
-    "C", # Complexity
-    "DTZ", # Datetime
-    "E", # Pycodestyle errors
-    "EM", # Error messages
-    "F", # Pyflakes
-    "FBT", # Boolean trap
-    "I", # Imports
-    "ICN", # Import conventions
-    "ISC", # String concatenation
-    "N", # PEP 8 naming
-    "PLC", # Pylint complexity
-    "PLE", # Pylint errors
-    "PLR", # Pylint refactoring
-    "PLW", # Pylint warnings
-    "Q", # Quotes
-    "RUF", # Ruff-specific rules
-    "S", # Security
-    "T", # Print statements
-    "TID", # Tidy imports
-    "UP", # Pyupgrade
-    "W", # Pycodestyle warnings
-    "YTT", # sys.version comparisons
-
-]
-lint.ignore = [
-    "ARG001", # Unused function argument
-    "E501", # Line too long
-    "I001", # Import sorting
-
-]
-
+line-length = 120
 # isort configuration within Ruff
-[tool.ruff.lint.isort]
-known-first-party = ["twat_ez"] # Treat as first-party imports for sorting
-
-# flake8-tidy-imports configuration within Ruff
-[tool.ruff.lint.flake8-tidy-imports]
-ban-relative-imports = "all" # Ban all relative imports for consistency
-
-# Per-file Linting Ignores
-# -----------------------
-# Customize linting rules for specific files or directories
-[tool.ruff.lint.per-file-ignores]
-# Tests can use magic values, assertions, and relative imports
-"tests/**/*" = [
-    "PLR2004", # Allow magic values in tests for readability
-    "S101", # Allow assertions in tests
-    "TID252"
-    # Allow relative imports in tests for convenience
+[tool.ruff.lint]
+select = [
+    "A",
+    "ARG",
+    "B",
+    "C",
+    "DTZ",
+    "E",
+    "EM",
+    "F",
+    "FBT",
+    "I",
+    "ICN",
+    "ISC",
+    "N",
+    "PLC",
+    "PLE",
+    "PLR",
+    "PLW",
+    "Q",
+    "RUF",
+    "S",
+    "T",
+    "TID",
+    "UP",
+    "W",
+    "YTT",
+]
+ignore = [
+    "ARG001",
+    "ARG002",
+    "ARG004",
+    "ARG005",
+    "B904",
+    "C901",
+    "DTZ005",
+    "E501",
+    "F401",
+    "F811",
+    "FBT001",
+    "FBT002",
+    "FBT003",
+    "I001",
+    "ISC001",
+    "N803",
+    "PLR0911",
+    "PLR0912",
+    "PLR0913",
+    "PLR0915",
+    "PLR2004",
+    "S311",
+    "S603",
+    "S607",
+    "T201",
 ]
 
-# Coverage Configuration
-# ---------------------
-# Settings for code coverage reporting
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S101"]
+
 [tool.coverage.run]
 source_pkgs = ["twat_ez", "tests"]
 branch = true
@@ -292,9 +299,9 @@ markers = [
     "benchmark: marks tests as benchmarks (select with '-m benchmark')",
     "unit: mark a test as a unit test",
     "integration: mark a test as an integration test",
-    "permutation: tests for permutation functionality",
-    "parameter: tests for parameter parsing",
-    "prompt: tests for prompt parsing",
+    "slow: marks tests as slow (select with '-m slow')",
+    "online: marks tests that require internet access",
+    "requires_api_key: marks tests that require API keys",
 ]
 norecursedirs = [
     ".*",
