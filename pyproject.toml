@@ -68,6 +68,9 @@ all = [
 [project.entry-points."twat.plugins"]
 ez = "twat_ez" # Plugin name and module for easy utilities
 
+[project.scripts]
+twat-ez = "twat_ez:main"
+
 # Project Authors
 # ---------------
 [[project.authors]]

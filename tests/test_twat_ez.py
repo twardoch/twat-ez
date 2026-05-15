@@ -8,21 +8,19 @@ from unittest import mock
 
 import pytest
 
-from urllib.error import HTTPError # For test_download_url_py_http_error
+from urllib.error import HTTPError  # For test_download_url_py_http_error
 
 # Attempt to import py_needs from twat_ez, handling potential import errors
-import twat_ez # For test_version
+import twat_ez  # For test_version
 
 try:
     from twat_ez import py_needs
 except ImportError as e:
-    pytest.skip(
-        f"Skipping tests for py_needs due to import error: {e}", allow_module_level=True
-    )
+    pytest.skip(f"Skipping tests for py_needs due to import error: {e}", allow_module_level=True)
 
 # Conditional import for PythonQt, skip Qt tests if not available
 try:
-    from PythonQt import QtNetwork # QtCore was unused
+    from PythonQt import QtNetwork  # QtCore was unused
 
     HAS_PYTHONQT = True
 except ImportError:
@@ -73,17 +71,26 @@ def test_version():
     assert isinstance(twat_ez.__version__, str)
 
 
+def test_public_exports_import() -> None:
+    """Every public export listed in __all__ is importable from twat_ez."""
+    for name in twat_ez.__all__:
+        assert getattr(twat_ez, name) is not None
+
+
+def test_main_outputs_version(capsys: pytest.CaptureFixture[str]) -> None:
+    """The lightweight plugin CLI exposes a stable smoke-testable main()."""
+    twat_ez.main()
+
+    assert "twat-ez v" in capsys.readouterr().out
+
+
 class TestPathProviders:
     @mock.patch("twat_ez.py_needs.site.getusersitepackages")
     @mock.patch.dict(sys.modules, {"fontlab": None})  # Ensure 'import fontlab' fails
-    def test_get_site_packages_path_default(
-        self, mock_getusersitepackages_on_pyneeds_site
-    ):
+    def test_get_site_packages_path_default(self, mock_getusersitepackages_on_pyneeds_site):
         # sys.modules patching makes 'import fontlab' in _get_fontlab_site_packages fail.
         # The mock_getusersitepackages_on_pyneeds_site patches site.getusersitepackages specifically for py_needs.site
-        mock_getusersitepackages_on_pyneeds_site.return_value = (
-            "/test/user/site-packages"
-        )
+        mock_getusersitepackages_on_pyneeds_site.return_value = "/test/user/site-packages"
 
         # Clear cache of _get_fontlab_site_packages if it exists and is an lru_cache
         # This is important because _get_fontlab_site_packages is defined at module level
@@ -97,10 +104,13 @@ class TestPathProviders:
         assert py_needs.get_site_packages_path() == Path("/test/user/site-packages")
 
     @mock.patch("twat_ez.py_needs.site.getusersitepackages")
-    @mock.patch("twat_ez.py_needs.Path.exists", return_value=True) # This mock is used by Path() in tested code
+    @mock.patch("twat_ez.py_needs.Path.exists", return_value=True)  # This mock is used by Path() in tested code
     @mock.patch("twat_ez.py_needs.sys.path", new_callable=list)
     def test_get_site_packages_path_fontlab(
-        self, mock_sys_path, mock_path_exists_arg, mock_getusersitepackages # mock_path_exists_arg is the mock for Path.exists
+        self,
+        mock_sys_path,
+        mock_path_exists_arg,
+        mock_getusersitepackages,  # mock_path_exists_arg is the mock for Path.exists
     ):
         # mock_path_exists_arg is not directly used in the test body, but the patch is needed.
         mock_fontlab = mock.MagicMock()
@@ -145,9 +155,7 @@ class TestPathProviders:
         actual_paths = py_needs.get_xdg_paths()
 
         # Normalize paths for comparison
-        assert sorted([str(p) for p in actual_paths]) == sorted(
-            [str(p.resolve()) for p in expected_paths]
-        )
+        assert sorted(str(p) for p in actual_paths) == sorted(str(p) for p in expected_paths)
 
     @mock.patch.dict(os.environ, {})  # Clear XDG vars
     @mock.patch("twat_ez.py_needs.Path.home")
@@ -184,12 +192,8 @@ class TestPathProviders:
         assert Path.home() / "AppData" / "Local" / "Microsoft" / "WindowsApps" in paths
 
     @mock.patch("twat_ez.py_needs.platform.system")
-    @mock.patch(
-        "twat_ez.py_needs.Path.exists", return_value=True
-    )  # Assume /snap/bin exists
-    def test_get_system_specific_paths_linux(
-        self, mock_path_exists, mock_platform_system
-    ):
+    @mock.patch("twat_ez.py_needs.Path.exists", return_value=True)  # Assume /snap/bin exists
+    def test_get_system_specific_paths_linux(self, mock_path_exists, mock_platform_system):
         mock_platform_system.return_value = "Linux"
         # py_needs.get_system_specific_paths.cache_clear() # Not cached
         paths = py_needs.get_system_specific_paths()
@@ -206,11 +210,12 @@ class TestPathProviders:
     @mock.patch("twat_ez.py_needs.get_xdg_paths")
     @mock.patch("twat_ez.py_needs.get_system_specific_paths")
     @mock.patch("twat_ez.py_needs.os.defpath", "/def/path1:/def/path2", create=True)
-    @mock.patch(
-        "twat_ez.py_needs.Path.is_dir", return_value=True
-    )  # Assume all paths are dirs
+    @mock.patch("twat_ez.py_needs.Path.is_dir", return_value=True)  # Assume all paths are dirs
     def test_build_extended_path(
-        self, mock_is_dir, mock_get_system_specific_paths, mock_get_xdg_paths # mock_is_dir was missing
+        self,
+        mock_is_dir,
+        mock_get_system_specific_paths,
+        mock_get_xdg_paths,  # mock_is_dir was missing
     ):
         # mock_is_dir is passed by the @mock.patch decorator for Path.is_dir
         mock_get_xdg_paths.return_value = [Path("/xdg/path")]
@@ -247,9 +252,7 @@ class TestPathProviders:
 
         # Check for correct separator
         if sys.platform != "win32":  # Simple check, os.pathsep might be more robust
-            assert all(
-                ":" in extended_path for p in expected_parts if len(expected_parts) > 1
-            )
+            assert all(":" in extended_path for p in expected_parts if len(expected_parts) > 1)
 
         # Check that paths from providers are included
         assert "/custom/provider/path" in extended_path
@@ -275,9 +278,7 @@ class TestVerifyExecutable:
     @mock.patch("twat_ez.py_needs.Path.is_file", return_value=True)
     @mock.patch("twat_ez.py_needs.platform.system")
     @mock.patch("twat_ez.py_needs.Path.stat")
-    def test_verify_executable_world_writable_unix(
-        self, mock_stat, mock_platform_system, mock_is_file, mock_exists
-    ):
+    def test_verify_executable_world_writable_unix(self, mock_stat, mock_platform_system, mock_is_file, mock_exists):
         mock_platform_system.return_value = "Linux"
         mock_stat.return_value.st_mode = 0o777  # rwxrwxrwx
         is_safe, reason = py_needs.verify_executable(Path("/test/worldwritable"))
@@ -292,9 +293,7 @@ class TestVerifyExecutable:
     @mock.patch("twat_ez.py_needs.Path.exists", return_value=True)
     @mock.patch("twat_ez.py_needs.Path.is_file", return_value=True)
     @mock.patch("twat_ez.py_needs.platform.system", return_value="Windows")
-    def test_verify_executable_windows(
-        self, mock_platform_system, mock_is_file, mock_exists
-    ):
+    def test_verify_executable_windows(self, mock_platform_system, mock_is_file, mock_exists):
         is_safe, reason = py_needs.verify_executable(Path("C:\\test\\safe.exe"))
         assert is_safe
         assert reason == "OK"
@@ -330,9 +329,7 @@ class TestDownloadUrlPy:
         # from urllib.error import HTTPError # Moved to top
 
         mock_opener = mock.MagicMock()
-        mock_opener.open.side_effect = HTTPError(
-            "http://example.com", 404, "Not Found", {}, None
-        )
+        mock_opener.open.side_effect = HTTPError("http://example.com", 404, "Not Found", {}, None)
         mock_build_opener.return_value = mock_opener
 
         py_needs.download_url_py.cache_clear()
@@ -370,8 +367,8 @@ class TestDownloadUrlQt:
     def test_download_url_qt_redirect(self, mock_qurl, mock_qeventloop, mock_qnam):
         mock_reply_redirect = mock.MagicMock()
         # Simulate redirect
-        mock_reply_redirect.attribute.side_effect = (
-            lambda attr: 301
+        mock_reply_redirect.attribute.side_effect = lambda attr: (
+            301
             if attr == QtNetwork.QNetworkRequest.HttpStatusCodeAttribute
             else (
                 mock.MagicMock(isValid=lambda: True)
@@ -415,9 +412,7 @@ class TestDownloadUrlQt:
 class TestDownloadUrl:
     @mock.patch("twat_ez.py_needs.download_url_qt")
     @mock.patch("twat_ez.py_needs.download_url_py")
-    def test_download_url_qt_success_no_fallback(
-        self, mock_download_py, mock_download_qt
-    ):
+    def test_download_url_qt_success_no_fallback(self, mock_download_py, mock_download_qt):
         mock_download_qt.return_value = b"qt data"
         py_needs.download_url.cache_clear()
         assert py_needs.download_url("http://example.com", mode=0) == b"qt data"
@@ -426,9 +421,7 @@ class TestDownloadUrl:
 
     @mock.patch("twat_ez.py_needs.download_url_qt")
     @mock.patch("twat_ez.py_needs.download_url_py")
-    def test_download_url_qt_fails_fallback_to_py(
-        self, mock_download_py, mock_download_qt
-    ):
+    def test_download_url_qt_fails_fallback_to_py(self, mock_download_py, mock_download_qt):
         mock_download_qt.side_effect = RuntimeError("Qt failed")
         mock_download_py.return_value = b"py data"
 
@@ -443,9 +436,7 @@ class TestWhichFunctionality:
     @mock.patch("twat_ez.py_needs.build_extended_path")
     @mock.patch("twat_ez.py_needs.verify_executable", return_value=(True, "OK"))
     @mock.patch("twat_ez.py_needs.Path.exists", return_value=True)
-    def test_which_found_verified(
-        self, mock_path_exists, mock_verify_exec, mock_build_ext_path, mock_shutil_which
-    ):
+    def test_which_found_verified(self, mock_path_exists, mock_verify_exec, mock_build_ext_path, mock_shutil_which):
         mock_build_ext_path.return_value = "/test/path1:/test/path2"
         mock_shutil_which.return_value = "/test/path1/mycmd"
 
@@ -453,17 +444,13 @@ class TestWhichFunctionality:
         result = py_needs.which("mycmd")
 
         assert result == Path("/test/path1/mycmd")
-        mock_shutil_which.assert_called_once_with(
-            "mycmd", mode=os.F_OK | os.X_OK, path="/test/path1:/test/path2"
-        )
+        mock_shutil_which.assert_called_once_with("mycmd", mode=os.F_OK | os.X_OK, path="/test/path1:/test/path2")
         mock_verify_exec.assert_called_once_with(Path("/test/path1/mycmd"))
 
     @mock.patch("twat_ez.py_needs.shutil.which")
     @mock.patch("twat_ez.py_needs.build_extended_path")
     @mock.patch("twat_ez.py_needs.verify_executable", return_value=(False, "Not safe"))
-    def test_which_found_not_verified(
-        self, mock_verify_exec, mock_build_ext_path, mock_shutil_which
-    ):
+    def test_which_found_not_verified(self, mock_verify_exec, mock_build_ext_path, mock_shutil_which):
         mock_build_ext_path.return_value = "/test/path"
         mock_shutil_which.return_value = "/test/path/mycmd"
 
@@ -495,15 +482,11 @@ class TestWhichFunctionality:
     @mock.patch("twat_ez.py_needs.which")
     @mock.patch("twat_ez.py_needs.which_pip")
     @mock.patch("twat_ez.py_needs.subprocess.run")
-    def test_which_uv_install_attempt(
-        self, mock_subprocess_run, mock_which_pip, mock_which
-    ):
+    def test_which_uv_install_attempt(self, mock_subprocess_run, mock_which_pip, mock_which):
         # First call to which("uv") returns None, second (after install) returns path
         mock_which.side_effect = [None, Path("/path/to/uv_after_install")]
         mock_which_pip.return_value = Path("/path/to/pip")
-        mock_subprocess_run.return_value = mock.MagicMock(
-            returncode=0, stdout="Installed uv", stderr=""
-        )
+        mock_subprocess_run.return_value = mock.MagicMock(returncode=0, stdout="Installed uv", stderr="")
 
         py_needs.which_uv.cache_clear()
         result = py_needs.which_uv()
@@ -538,17 +521,13 @@ class TestWhichFunctionality:
         mock_pip_path = mock.MagicMock(spec=Path)
         mock_pip_path.exists.return_value = True
         mock_pip_path.__fspath__ = lambda: "/path/to/pip"
-        mock_pip_path.__str__.return_value = (
-            "/path/to/pip"  # Configure return_value of __str__
-        )
-        type(mock_pip_path).__bool__ = lambda _: True # Changed self_val to _
+        mock_pip_path.__str__.return_value = "/path/to/pip"  # Configure return_value of __str__
+        type(mock_pip_path).__bool__ = lambda _: True  # Changed self_val to _
 
         mock_internal_which.return_value = mock_pip_path
 
         py_needs.which_pip.cache_clear()
-        assert (
-            py_needs.which_pip() is mock_pip_path
-        )  # Assert that the exact mock object is returned
+        assert py_needs.which_pip() is mock_pip_path  # Assert that the exact mock object is returned
         mock_ensurepip_bootstrap.assert_not_called()
 
     @mock.patch("shutil.which")
@@ -573,13 +552,9 @@ class TestWhichFunctionality:
 
         mock_pip_path_after_bootstrap = mock.MagicMock(spec=Path)
         mock_pip_path_after_bootstrap.exists.return_value = True
-        mock_pip_path_after_bootstrap.__fspath__ = (
-            lambda: "/path/to/pip_after_bootstrap"
-        )
-        mock_pip_path_after_bootstrap.__str__.return_value = (
-            "/path/to/pip_after_bootstrap"
-        )
-        type(mock_pip_path_after_bootstrap).__bool__ = lambda _: True # Changed self_val to _
+        mock_pip_path_after_bootstrap.__fspath__ = lambda: "/path/to/pip_after_bootstrap"
+        mock_pip_path_after_bootstrap.__str__.return_value = "/path/to/pip_after_bootstrap"
+        type(mock_pip_path_after_bootstrap).__bool__ = lambda _: True  # Changed self_val to _
 
         mock_internal_which.side_effect = [None, mock_pip_path_after_bootstrap]
         mock_importlib_util.find_spec.return_value = True
@@ -609,9 +584,7 @@ class TestNeedsDecorator:
     @mock.patch("twat_ez.py_needs.importlib.util.find_spec")
     @mock.patch("twat_ez.py_needs._install_with_uv")
     @mock.patch("twat_ez.py_needs._import_modules")
-    def test_needs_deps_missing_install_success(
-        self, mock_import_modules, mock_install_uv, mock_find_spec
-    ):
+    def test_needs_deps_missing_install_success(self, mock_import_modules, mock_install_uv, mock_find_spec):
         # dep1 is missing, dep2 is present
         mock_find_spec.side_effect = lambda mod: mod == "dep2"
 
@@ -622,27 +595,21 @@ class TestNeedsDecorator:
         assert my_func() == "done"
         mock_find_spec.assert_any_call("dep1")
         mock_find_spec.assert_any_call("dep2")
-        mock_install_uv.assert_called_once_with(["dep1"], True) # target is positional in _install_with_uv
+        mock_install_uv.assert_called_once_with(["dep1"], True)  # target is positional in _install_with_uv
         mock_import_modules.assert_called_once_with(["dep1"])
 
-    @mock.patch(
-        "twat_ez.py_needs.importlib.util.find_spec", return_value=False
-    )  # All missing
+    @mock.patch("twat_ez.py_needs.importlib.util.find_spec", return_value=False)  # All missing
     @mock.patch("twat_ez.py_needs._install_with_uv")
     def test_needs_deps_missing_install_fails(self, mock_install_uv, mock_find_spec):
-        mock_install_uv.side_effect = subprocess.CalledProcessError(
-            1, "cmd", stderr="Install failed"
-        )
+        mock_install_uv.side_effect = subprocess.CalledProcessError(1, "cmd", stderr="Install failed")
 
         @py_needs.needs(["dep1"])
         def my_func():
             return "done"
 
-        with pytest.raises(
-            RuntimeError, match="UV installation failed: Install failed"
-        ):
+        with pytest.raises(RuntimeError, match="UV installation failed: Install failed"):
             my_func()
-        mock_install_uv.assert_called_once_with(["dep1"], False) # target is positional in _install_with_uv
+        mock_install_uv.assert_called_once_with(["dep1"], False)  # target is positional in _install_with_uv
 
 
 # It's good practice to also test the main function if it has significant logic,
@@ -655,22 +622,16 @@ class TestNeedsDecorator:
 def test_bin_or_str():
     assert py_needs.bin_or_str(b"test", mode=0) == b"test"
     assert py_needs.bin_or_str(b"test", mode=1) == "test"
-    assert (
-        py_needs.bin_or_str(b"\xff\xfe", mode=1) == b"\xff\xfe"
-    )  # Stays bytes on decode error
+    assert py_needs.bin_or_str(b"\xff\xfe", mode=1) == b"\xff\xfe"  # Stays bytes on decode error
     assert py_needs.bin_or_str(b"test", mode=2) == "test"
     with pytest.raises(UnicodeDecodeError):
         py_needs.bin_or_str(b"\xff\xfe", mode=2)  # Forces decode
 
 
 # Test UV_INSTALL_TARGET default behavior
-@mock.patch(
-    "twat_ez.py_needs.site.getusersitepackages", return_value="/mocked/user/site"
-)
+@mock.patch("twat_ez.py_needs.site.getusersitepackages", return_value="/mocked/user/site")
 @mock.patch("twat_ez.py_needs._get_fontlab_site_packages", return_value=None)
-def test_uv_install_target_default(
-    mock_get_fontlab_none, mock_getusersitepackages
-):  # Removed self
+def test_uv_install_target_default(mock_get_fontlab_none, mock_getusersitepackages):  # Removed self
     # To correctly test the module-level UV_INSTALL_TARGET, we need to reload py_needs
     # or carefully manage how its default value is determined in the test environment.
     # The autouse fixture `reset_caches_and_providers` already handles resetting UV_INSTALL_TARGET.
@@ -703,9 +664,7 @@ def test_uv_install_target_default(
         del os.environ["UV_INSTALL_TARGET"]
 
     current_install_target = Path(py_needs.get_site_packages_path())
-    py_needs.UV_INSTALL_TARGET = (
-        current_install_target  # Re-assign based on mocked path
-    )
+    py_needs.UV_INSTALL_TARGET = current_install_target  # Re-assign based on mocked path
 
     assert py_needs.UV_INSTALL_TARGET == Path("/mocked/user/site")
 
@@ -730,9 +689,7 @@ def test_uv_install_target_env_var():
         py_needs.UV_INSTALL_TARGET = Path(
             os.environ.get(
                 "UV_INSTALL_TARGET",
-                str(
-                    py_needs.get_site_packages_path()
-                ),  # This would use the mock_get_site if env var not found
+                str(py_needs.get_site_packages_path()),  # This would use the mock_get_site if env var not found
             )
         )
         assert py_needs.UV_INSTALL_TARGET == Path("/custom/target")
@@ -755,9 +712,7 @@ def test_public_api_imports():
 # This is more for illustration as the fixture handles it globally.
 def test_cache_clearing_manual_example():
     with (
-        mock.patch(
-            "twat_ez.py_needs.shutil.which", return_value="/bin/true"
-        ) as mock_shutil_which,
+        mock.patch("twat_ez.py_needs.shutil.which", return_value="/bin/true") as mock_shutil_which,
         mock.patch("twat_ez.py_needs.verify_executable", return_value=(True, "OK")),
         mock.patch("twat_ez.py_needs.Path.exists", return_value=True),
     ):

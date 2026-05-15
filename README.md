@@ -69,9 +69,14 @@ uv pip install twat-ez
 
 #### As a `twat` Plugin
 
-Once installed, `twat-ez` is available as a plugin within the `twat` ecosystem. The `pyproject.toml` registers an entry point `ez = "twat_ez"`. The specific way to interact with it as a plugin will depend on the `twat` application's plugin management system.
+Once installed, `twat-ez` is available as the `ez` plugin within the `twat` ecosystem. The `pyproject.toml` registers `ez = "twat_ez"`, so the host can discover it without importing the module for `twat --list` and can dispatch its package CLI with `twat ez`.
 
-*(Refer to the `twat` application's documentation for details on how it discovers and uses plugins.)*
+```bash
+twat --list
+twat ez
+twat-ez
+python -m twat_ez
+```
 
 #### Programmatic Usage with `py_needs`
 

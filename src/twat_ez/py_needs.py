@@ -44,9 +44,7 @@ PathProvider = Callable[[], list[str]]
 _path_providers: list[PathProvider] = []
 
 # Configure basic logging
-logging.basicConfig(
-    level=logging.DEBUG, format="%(levelname)s: %(message)s", stream=sys.stdout
-)
+logging.basicConfig(level=logging.DEBUG, format="%(levelname)s: %(message)s", stream=sys.stdout)
 
 
 def _get_fontlab_site_packages() -> Path | None:
@@ -302,14 +300,8 @@ def download_url_qt(
         reply.finished.connect(loop.quit)
         loop.exec_()
 
-        if (
-            sc := reply.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)
-        ) in {301, 302, 303, 307, 308}:
-            if (
-                redir_url := reply.attribute(
-                    QtNetwork.QNetworkRequest.RedirectionTargetAttribute
-                )
-            ).isValid():
+        if (sc := reply.attribute(QtNetwork.QNetworkRequest.HttpStatusCodeAttribute)) in {301, 302, 303, 307, 308}:
+            if (redir_url := reply.attribute(QtNetwork.QNetworkRequest.RedirectionTargetAttribute)).isValid():
                 current_url, redir_count = (
                     reply.url().resolved(redir_url),
                     redir_count + 1,
@@ -421,7 +413,7 @@ def which_uv() -> Path | None:
     pip_cli = which_pip()
     if pip_cli:
         try:
-            subprocess.run(  # noqa: S603
+            subprocess.run(
                 [str(pip_cli), "install", "--user", "uv"],
                 check=True,
                 capture_output=True,
@@ -477,9 +469,7 @@ def which_pip() -> Path | None:
             return pip_path_after_bootstrap
 
         # As a last resort, try getting path from pip module if available
-        if (
-            pip_module_spec := importlib.util.find_spec("pip")
-        ) and pip_module_spec.origin:
+        if (pip_module_spec := importlib.util.find_spec("pip")) and pip_module_spec.origin:
             # pip a_module.__file__ is usually an __init__.py, so go to parent dir for bin
             pip_module_path = Path(pip_module_spec.origin).parent
             # This heuristic might not always yield the pip executable directly
@@ -487,9 +477,7 @@ def which_pip() -> Path | None:
             # and executable could be .../bin/pip
             # We rely on `which` being able to find it after bootstrap.
             # This part is more of a fallback if `which` still fails.
-            if potential_pip_exe := shutil.which(
-                "pip", path=str(pip_module_path.parent / "bin")
-            ):
+            if potential_pip_exe := shutil.which("pip", path=str(pip_module_path.parent / "bin")):
                 return Path(potential_pip_exe)
             if potential_pip_exe := shutil.which("pip"):  # try global path again
                 return Path(potential_pip_exe)
@@ -512,7 +500,7 @@ def which(
     cmd: str,
     mode: int = os.F_OK | os.X_OK,
     path: str | None = None,
-    verify: bool = True,  # noqa: FBT001, FBT002
+    verify: bool = True,
 ) -> Path | None:
     """
     Enhanced version of shutil.which that searches an extended set of paths.
@@ -533,7 +521,7 @@ def which(
         result_path = Path(result)
 
         if verify:
-            is_safe, reason = verify_executable(result_path)
+            is_safe, _reason = verify_executable(result_path)
             if not is_safe:
                 if os.environ.get("CLIFIND_DEBUG"):
                     pass
@@ -625,7 +613,7 @@ def _install_with_uv(missing: list[str], target: bool) -> None:
         cmd.extend(["--python", sys.executable])
     cmd.extend(missing)
 
-    result = subprocess.run(cmd, check=True, capture_output=True, text=True)  # noqa: S603
+    result = subprocess.run(cmd, check=True, capture_output=True, text=True)
 
     if result.stdout:
         logging.debug(f"UV install output: {result.stdout}")
