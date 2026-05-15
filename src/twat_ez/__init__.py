@@ -12,16 +12,10 @@ Key helpers in ``py_needs``:
 """
 
 from __future__ import annotations
+from .__version__ import __version__  # noqa: F401
 
-from importlib.metadata import PackageNotFoundError, version
 
 from twat_ez import py_needs
-
-try:
-    __version__ = version("twat-ez")
-except PackageNotFoundError:
-    __version__ = "0.0.0-dev"
-
 
 def main() -> None:
     """CLI entry point for twat-ez."""
