@@ -12,14 +12,14 @@ Key helpers in ``py_needs``:
 """
 
 from __future__ import annotations
-from .__version__ import __version__  # noqa: F401
+from .__version__ import __version__
 
 
 from twat_ez import py_needs
 
 def main() -> None:
     """CLI entry point for twat-ez."""
-    from twat_ez.__main__ import main as cli_main  # noqa: PLC0415
+    from twat_ez.__main__ import main as cli_main
 
     cli_main()
 

@@ -60,7 +60,7 @@ def _get_fontlab_site_packages() -> Path | None:
         None: If FontLab is not available or the path is not in sys.path
     """
     try:
-        import fontlab  # noqa: PLC0415
+        import fontlab
 
         # Get FontLab data path
         fontlab_path = Path(fontlab.flPreferences.instance().dataPath)
@@ -289,8 +289,8 @@ def download_url_qt(
     Raises:
         RuntimeError: For network errors, too many redirects, or invalid responses
     """
-    from PythonQt import QtNetwork  # noqa: PLC0415
-    from PythonQt.QtCore import QEventLoop, QUrl  # noqa: PLC0415
+    from PythonQt import QtNetwork
+    from PythonQt.QtCore import QEventLoop, QUrl
 
     loop, nam = QEventLoop(), QtNetwork.QNetworkAccessManager()
     current_url, redir_count = QUrl(url), 0
@@ -346,8 +346,8 @@ def download_url_py(
     Raises:
         RuntimeError: For network errors, too many redirects, or invalid responses
     """
-    import urllib.error  # noqa: PLC0415
-    import urllib.request  # noqa: PLC0415
+    import urllib.error
+    import urllib.request
 
     opener = urllib.request.build_opener()
     opener.addheaders = [("User-Agent", "Python-urllib/3.x")]
@@ -449,7 +449,7 @@ def which_pip() -> Path | None:
     # If not found, try to bootstrap pip using ensurepip
     logging.info("pip not found via which(). Trying to ensure pip is available.")
     try:
-        import ensurepip  # noqa: PLC0415
+        import ensurepip
 
         # Bootstrap pip. This will install pip if it's not already available.
         # ensurepip.bootstrap() might add pip to a location that which() can find.
@@ -675,7 +675,7 @@ def needs(mods: list[str], *, target: bool = False) -> Callable:
 
 @needs(["fire", "pydantic"], target=False)
 def main() -> None:
-    import fire  # noqa: PLC0415
+    import fire
 
     logging.info(repr(fire))
     return fire
