@@ -31,6 +31,7 @@ classifiers = [
 # -------------------
 # External packages required for the project to function
 dependencies = [
+    "fire>=0.6.0",   # CLI framework
     "twat>=1.8.1", # Core twat package, providing essential functionality
 
 ]
@@ -69,7 +70,10 @@ all = [
 ez = "twat_ez" # Plugin name and module for easy utilities
 
 [project.scripts]
-twat-ez = "twat_ez:main"
+twat-ez          = "twat_ez.__main__:main"
+twat-ez-version  = "twat_ez.__main__:cmd_version"
+twat-ez-info     = "twat_ez.__main__:cmd_info"
+twat-ez-py-needs = "twat_ez.__main__:cmd_py_needs"
 
 # Project Authors
 # ---------------
