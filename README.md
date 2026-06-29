@@ -6,6 +6,7 @@
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![GitHub Actions CI](https://github.com/twardoch/twat-ez/actions/workflows/push.yml/badge.svg)](https://github.com/twardoch/twat-ez/actions/workflows/push.yml)
 [![GitHub Actions Release](https://github.com/twardoch/twat-ez/actions/workflows/release.yml/badge.svg)](https://github.com/twardoch/twat-ez/actions/workflows/release.yml)
+[![Docs](https://img.shields.io/badge/docs-mkdocs--material-blue)](https://github.com/twardoch/twat-ez#readme)
 
 `twat-ez` is a Python library that provides a collection of easy-to-use utilities designed to enhance the `twat` ecosystem and simplify common Python scripting tasks. Its core component, the `py_needs` module, offers powerful features for managing script dependencies, finding tools and executables, and downloading files from the web.
 

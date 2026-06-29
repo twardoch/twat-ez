@@ -18,10 +18,8 @@ from .__version__ import __version__
 from twat_ez import py_needs
 
 def main() -> None:
-    """CLI entry point for twat-ez."""
-    from twat_ez.__main__ import main as cli_main
-
-    cli_main()
+    """CLI entry point for twat-ez — prints version string."""
+    print(f"twat-ez v{__version__}")
 
 
 __all__ = ["__version__", "main", "py_needs"]
