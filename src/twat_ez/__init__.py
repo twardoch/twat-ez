@@ -17,6 +17,7 @@ from .__version__ import __version__
 
 from twat_ez import py_needs
 
+
 def main() -> None:
     """CLI entry point for twat-ez — prints version string."""
     print(f"twat-ez v{__version__}")
